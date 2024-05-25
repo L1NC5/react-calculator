@@ -8,6 +8,10 @@ function Calculator() {
   const [operationState, setOperationState] = useState("false");
   const [decimalState, setDecimalState] = useState(false);
 
+  const numberHandler = (number) => {
+    setCurrentNumber(currentNumber + number);
+  };
+
   const switchOperator = (operator) => {
     setDecimalState(false);
     if (currentOperator !== "") {
@@ -49,21 +53,25 @@ function Calculator() {
   const handleDecimalState = () => {
     if (decimalState == false) {
       setDecimalState(true);
-      setCurrentNumber(currentNumber + '.');
+      setCurrentNumber(currentNumber + ".");
     } else {
-    	console.log('Decimale già inserito!');
+      console.log("Decimale già inserito!");
     }
   };
 
   // UseEffect: check for changes in the declared variable [name] and fire a function accordingly
-  useEffect(() => {
-    console.log(operationState);
-  }, [operationState]);
+  // useEffect(() => {
+  //   console.log(operationState);
+  // }, [operationState]);
 
   return (
     <div className="bg-slate-800 p-4 rounded-lg">
       {!operationState && <p>Ciao</p>}
-      <ButtonPanel />
+      <ButtonPanel
+        numberHandler={numberHandler}
+        switchOperator={switchOperator}
+        handleDecimalState={handleDecimalState}
+      />
       <button
         className={`bg-white text-black p-4 ${operationState && "border-2 border-red-600"}`}
         onClick={() => switchOperator("=")}
