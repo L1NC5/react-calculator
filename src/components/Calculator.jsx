@@ -1,91 +1,27 @@
-import { useEffect, useState } from "react";
+import { useReducer } from "react";
 import ButtonPanel from "./ButtonPanel";
+import MathReducer from "../reducers/MathReducer";
+import Display from "./Display";
 
-function Calculator() {
-  const [previousNumber, setPreviousNumber] = useState("0");
-  const [currentNumber, setCurrentNumber] = useState("0");
-  const [currentOperator, setCurrentOperator] = useState("+");
-  const [operationState, setOperationState] = useState("false");
-  const [decimalState, setDecimalState] = useState(false);
-
-  const numberHandler = (number) => {
-    setCurrentNumber(currentNumber + number);
+export default function Calculator() {
+  const initialState = {
+    previousNumber: "0",
+    currentNumber: "0",
+    currentOperator: "",
+    operationState: false,
+    decimalState: false,
+    negativeState: false,
   };
 
-  const switchOperator = (operator) => {
-    setDecimalState(false);
-    if (currentOperator !== "") {
-      let result = 0;
-      switch (currentOperator) {
-        case "+":
-          result = String(
-            parseFloat(previousNumber, 10) + parseFloat(currentNumber, 10),
-          );
-          break;
-        case "-":
-          result = String(
-            parseFloat(previousNumber, 10) - parseFloat(currentNumber, 10),
-          );
-          break;
-        case "/":
-          result = String(
-            parseFloat(previousNumber, 10) / parseFloat(currentNumber, 10),
-          );
-          break;
-        case "*":
-          result = String(
-            parseFloat(previousNumber, 10) * parseFloat(currentNumber, 10),
-          );
-          break;
-      }
-      setPreviousNumber(result);
-      operator === "=" ? setCurrentNumber(result) : setCurrentNumber("0");
-    }
-    if (operator === "=") {
-      setCurrentOperator("");
-      setOperationState(false);
-    } else {
-      setCurrentOperator(operator);
-      setOperationState(true);
-    }
-  };
-
-  const handleDecimalState = () => {
-    if (decimalState == false) {
-      setDecimalState(true);
-      setCurrentNumber(currentNumber + ".");
-    } else {
-      console.log("Decimale già inserito!");
-    }
-  };
-
-  // UseEffect: check for changes in the declared variable [name] and fire a function accordingly
-  // useEffect(() => {
-  //   console.log(operationState);
-  // }, [operationState]);
+  const [state, dispatch] = useReducer(MathReducer, initialState);
 
   return (
-    <div className="bg-slate-800 p-4 rounded-lg">
-      {!operationState && <p>Ciao</p>}
-      <ButtonPanel
-        numberHandler={numberHandler}
-        switchOperator={switchOperator}
-        handleDecimalState={handleDecimalState}
+    <div className="flex flex-col items-center gap-8 bg-slate-800 p-4 rounded-lg">
+      <Display
+        previousNumber={state.previousNumber}
+        currentNumber={state.currentNumber}
       />
-      <button
-        className={`bg-white text-black p-4 ${operationState && "border-2 border-red-600"}`}
-        onClick={() => switchOperator("=")}
-      >
-        =
-      </button>
-      <button
-        className={`bg-white text-black p-4 ${operationState && "border-2 border-red-600"}`}
-        onClick={() => switchOperator("+")}
-      >
-        +
-      </button>
+      <ButtonPanel dispatch={dispatch} />
     </div>
   );
 }
-
-export default Calculator;
